@@ -92,10 +92,23 @@ def process_log_data(spark, input_data, output_data):
     song_df = spark.read.json(os.path.join(input_data, 'song_data', '*', '*', '*'))
 
     # extract columns from joined song and log datasets to create songplays table 
-    songplays_table = 
+    df = df.join(song_df, song_df.title == df.song)
+    
+    songplays_table = df.select(
+        col('ts').alias('ts'),
+        col('userId').alias('user_id'),
+        col('level').alias('level'),
+        col('song_id').alias('song_id'),
+        col('artist_id').alias('artist_id'),
+        col('ssessionId').alias('session_id'),
+        col('location').alias('location'),
+        col('userAgent').alias('user_agent'),
+        col('year').alias('year'),
+        month('datetime').alias('month')
+    )
 
     # write songplays table to parquet files partitioned by year and month
-    songplays_table
+     songplays_table.write.parquet(os.path.join(output_data, 'songplays'), partitionBy=['year', 'month'])
 
 
 def main():
