@@ -36,6 +36,7 @@ def process_song_data(spark, input_data, output_data):
 
     # extract columns to create songs table
     songs_table = df.select(['song_id', 'title', 'artist_id', 'year', 'duration'])
+    songs_table = songs_table.dropDuplicates(['song_id'])
     
     # write songs table to parquet files partitioned by year and artist
     songs_table.write.parquet(os.path.join(output_data, 'songs'), partitionBy=['year', 'artist_id'])
@@ -43,13 +44,21 @@ def process_song_data(spark, input_data, output_data):
     # extract columns to create artists table
     columns = ['artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']
     columns = [col + ' as ' + col.replace('artist_', '') for col in columns]
-    artists_table = df.selectExpr('artist_id', *columns)    
+    artists_table = df.selectExpr('artist_id', *columns)
+    artists_table = artists_table.dropDuplicates(['artist_id'])
     
     # write artists table to parquet files
     artists_table.write.parquet(os.path.join(output_data, 'artists/artists.parquet'), 'overwrite')
 
 
 def process_log_data(spark, input_data, output_data):
+    """
+    Load data from log_data files and extract columns
+    for users and time tables.
+    Reads both the log_data and song_data files and 
+    extracts columns for songplays table.
+    Writes the data into parquet files for loading on S3.
+    """
     # get filepath to log data file
     log_data = os.path.join(input_data, 'log_data', '*', '*')
 
@@ -108,7 +117,7 @@ def process_log_data(spark, input_data, output_data):
     )
 
     # write songplays table to parquet files partitioned by year and month
-     songplays_table.write.parquet(os.path.join(output_data, 'songplays'), partitionBy=['year', 'month'])
+    songplays_table.write.parquet(os.path.join(output_data, 'songplays'), partitionBy=['year', 'month'])
 
 
 def main():
