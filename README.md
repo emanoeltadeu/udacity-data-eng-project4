@@ -20,4 +20,7 @@ Reads data from S3, processes that data using Spark, and writes them back to S3
 Contains your AWS credentials
 
 ## To run the project:
-   * Run `etl.py`. This will start the ETL pipeline.
+   * Set variables on dl.cfg file:
+     - AWS_ACCESS_KEY_ID 
+     - AWS_SECRET_ACCESS_KEY
+   * Run `python etl.py`. This will start the ETL pipeline.
