@@ -20,4 +20,4 @@ Reads data from S3, processes that data using Spark, and writes them back to S3
 Contains your AWS credentials
 
 ## To run the project:
-   * Run `etl.py`. This will start pipeline which will read the data from files and populate the tables.
+   * Run `etl.py`. This will start the ETL pipeline.
